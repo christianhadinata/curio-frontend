@@ -1,15 +1,17 @@
-import axios from "axios";
-
 import {
   SET_USER_GROUPS,
   SET_SELECTED_GROUP,
+  SET_SELECTED_GROUP_ARTEFACTS,
+  SET_SELECTED_GROUP_MEMBERS,
 } from "../types/groupsTypes";
 
 import {
   getGroupDetailsAPIRequest,
   getUserGroupsAPIRequest,
   createGroupAPIRequest,
-  putGroupAdminAPIRequest
+  putGroupAdminAPIRequest,
+  getGroupAllArtefactsAPIRequest,
+  getGroupAllMembersAPIRequest,
 } from "../utils/APIHelpers/groupAPIHelper";
 
 import { uploadImageToGCS } from "../utils/imageUpload";
@@ -92,7 +94,38 @@ export const getSelectedGroup = groupId => dispatch => {
   });
 };
 
-// assign user groups
+// get all artefacts of a group
+export const getSelectedGroupAllArtefacts = groupId => dispatch => {
+  return new Promise((resolve, reject) => {
+    getGroupAllArtefactsAPIRequest(groupId)
+      .then(res => {
+        resolve(res);
+        dispatch(setSelectedGroupArtefacts(res.data));
+      })
+      // failure
+      .catch(err => {
+        console.log("groupActions: " + err);
+        reject(err);
+      });
+  });
+};
+
+// get all members of a group
+export const getSelectedGroupAllMembers = groupId => dispatch => {
+  return new Promise((resolve, reject) => {
+    getGroupAllMembersAPIRequest(groupId)
+      .then(res => {
+        resolve(res);
+        dispatch(setSelectedGroupMembers(res.data));
+      })
+      // failure
+      .catch(err => {
+        console.log("groupActions: " + err);
+        reject(err);
+      });
+  });
+};
+
 export const setUserGroups = decoded => {
   return {
     type: SET_USER_GROUPS,
@@ -100,10 +133,23 @@ export const setUserGroups = decoded => {
   };
 };
 
-// assign new group to user
 export const setSelectedGroup = decoded => {
   return {
     type: SET_SELECTED_GROUP,
+    payload: decoded
+  };
+};
+
+export const setSelectedGroupArtefacts = decoded => {
+  return {
+    type: SET_SELECTED_GROUP_ARTEFACTS,
+    payload: decoded
+  };
+};
+
+export const setSelectedGroupMembers = decoded => {
+  return {
+    type: SET_SELECTED_GROUP_MEMBERS,
     payload: decoded
   };
 };

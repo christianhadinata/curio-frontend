@@ -1,12 +1,15 @@
 import {
   SET_USER_GROUPS,
   SET_SELECTED_GROUP,
+  SET_SELECTED_GROUP_ARTEFACTS,
+  SET_SELECTED_GROUP_MEMBERS,
 } from "../types/groupsTypes";
 
 const initialState = {
   userGroups: [],
   selectedGroup: {},
-  errors: {}
+  selectedGroupArtefacts: [],
+  selectedGroupMembers: []
 };
 
 export default function(state = initialState, action) {
@@ -20,6 +23,16 @@ export default function(state = initialState, action) {
       return {
         ...state,
         selectedGroup: action.payload
+      };
+    case SET_SELECTED_GROUP_ARTEFACTS:
+      return {
+        ...state,
+        selectedGroupArtefacts: action.payload
+      };
+    case SET_SELECTED_GROUP_MEMBERS:
+      return {
+        ...state,
+        selectedGroupMembers: action.payload
       };
     default:
       return state;

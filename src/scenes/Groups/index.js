@@ -1,10 +1,18 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { View, StyleSheet, ScrollView, Dimensions, Text } from "react-native";
+import { 
+  View, 
+  StyleSheet, 
+  ScrollView, 
+  Dimensions, 
+  Text,
+  TouchableOpacity,
+  Image
+} from "react-native";
 
 // import redux actions for groups
-import { createNewGroup, getSelectedGroup } from "../../actions/groupsActions";
+import { createNewGroup, getSelectedGroup, getSelectedGroupAllArtefacts, getSelectedGroupAllMembers } from "../../actions/groupsActions";
 
 // custom components
 import CardCarousel from "../../component/CardCarousel";
@@ -77,10 +85,12 @@ class Groups extends Component {
   };
 
   // click a specific group on the Groups scene
-  clickGroup = async groupId => {
+  clickGroup = async (groupId) => {
     const { navigate } = this.props.navigation;
-    // !!! DOESN'T WORK FOR NOW !!!
-    await this.props.getSelectedGroup(groupId);
+
+    this.props.getSelectedGroup(groupId);
+    this.props.getSelectedGroupAllArtefacts(groupId);
+    this.props.getSelectedGroupAllMembers(groupId);
     navigate("SelectedGroup");
   };
 
@@ -104,14 +114,32 @@ class Groups extends Component {
 
     // create CardGroup object out of group and push it into cardGroups array
     for (var i = 0; i < unpinnedGroups.length; i++) {
+      const groupId = unpinnedGroups[i].details._id;
+      const text = unpinnedGroups[i].details.title;
+      const imageURI = unpinnedGroups[i].details.coverPhoto;
+
       cardGroups.push(
-        <CardGroup
-          onPress={() => this.clickGroup.bind(this)}
-          key={groupKey}
-          groupId={unpinnedGroups[i].details._id}
-          text={unpinnedGroups[i].details.title}
-          image={{ uri: unpinnedGroups[i].details.coverPhoto }}
-        />
+        // DOES NOT WORK FOR NOW!!!
+        // <CardGroup
+        //   onPress={() => this.clickGroup}
+        //   key={groupKey}
+        //   groupId={groupId}
+        //   text={text}
+        //   image={{ uri: imageURI }}
+        // />
+
+        // Temporary CardGroup
+        <View key={groupKey} style={styles.card}>
+          <TouchableOpacity onPress={() => this.clickGroup(groupId)}>
+              <View style={styles.picPlaceholder}>
+                  <Image style={[styles.photo]} source={{ uri: imageURI }} />
+              </View>
+              <View style={styles.textPlaceholder}>
+                  <Text style={[styles.title, styles.font]}>{text}</Text>
+
+              </View>
+          </TouchableOpacity>
+        </View>
       );
       groupKey++;
 
@@ -220,7 +248,69 @@ const styles = StyleSheet.create({
     height: hp(0.6),
     alignItems: "center",
     justifyContent: "center"
-  }
+  },
+
+  // TEMPORARY
+  // STYLES FOR CARD GROUP (START)
+  card: {
+    width: Dimensions.get("window").width * 0.44,
+    marginTop: 10,
+    marginLeft: Dimensions.get("window").width * 0.04,
+    height: wd(0.5),
+    borderRadius: 15,
+    borderWidth: 0.05,
+    elevation: 1,
+    borderColor: "#E2E2E2",
+    alignContent: "center",
+    alignItems: "center",
+},
+
+font:{
+    fontFamily: "HindSiliguri-Regular"
+},
+
+picPlaceholder: {
+    flex: 0.7,
+    alignItems: "center",
+    justifyContent: "center",
+},
+
+photo: {
+    width: Dimensions.get("window").width * 0.435,
+    height: wd(0.35),
+    marginTop: 10,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+},
+
+textPlaceholder: {
+    flex: 0.3,
+    margin: 5,
+},
+
+title: {
+    flex: 0.4,
+    marginHorizontal: 5,
+    marginTop: 3,
+},
+
+userProfile: {
+    flex: 0.6,
+    flexDirection: "row",
+    alignItems: "center"
+},
+
+userProfilePic: {
+    width: wd(0.07),
+    height: wd(0.07),
+    marginHorizontal: 5
+},
+
+userName:{
+    color: "#939090"
+}
+
+// STYLES FOR CARD GROUP (END)
 });
 
 Groups.propTypes = {
@@ -237,5 +327,5 @@ const mapStateToProps = state => ({
 //  connect to redux and export
 export default connect(
   mapStateToProps,
-  { createNewGroup, getSelectedGroup }
+  { createNewGroup, getSelectedGroup, getSelectedGroupAllArtefacts, getSelectedGroupAllMembers }
 )(Groups);
