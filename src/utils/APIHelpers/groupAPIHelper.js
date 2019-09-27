@@ -44,23 +44,3 @@ export const putGroupAdminAPIRequest = (groupId, userId) => {
       .catch(err => reject(err));
   });
 };
-
-// get all artefacts of a group
-export const getGroupAllArtefactsAPIRequest = (groupId) => {
-  return new Promise((resolve, reject) => {
-    axios
-      .get("http://curioapp.herokuapp.com/api/group/id/" + groupId + "/artefacts")
-      .then(res => resolve(res))
-      .catch(err => reject(err));
-  })
-}
-
-// get all artefacts of a group
-export const getGroupAllMembersAPIRequest = (groupId) => {
-  return new Promise((resolve, reject) => {
-    axios
-      .get("http://curioapp.herokuapp.com/api/group/id/" + groupId + "/members")
-      .then(res => resolve(res))
-      .catch(err => reject(err));
-  })
-}
